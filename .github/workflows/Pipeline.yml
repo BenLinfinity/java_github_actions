@@ -1,0 +1,12 @@
+name : CI/CD Pipeline
+on:
+  push:
+    branches: [feature/ci_setup]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+    
