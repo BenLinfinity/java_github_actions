@@ -29,10 +29,10 @@ jobs:
           DOCKER_USER: benlevydockerinfinity
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PUSH }}
         run: | 
-          docker build -t ${{ DOCKER_USER }}/hello_world_java:latest \
-          -t ${{ DOCKER_USER }}/hello_world_java:${{ env.VERSION }}  .
+          docker build -t ${{ vars.DOCKER_USER }}/hello_world_java:latest \
+          -t ${{ vars.DOCKER_USER }}/hello_world_java:${{ env.VERSION }}  .
           
-          docker login -u ${{ DOCKER_USER }} -p ${{ DOCKER_PASSWORD }}
+          docker login -u ${{ vars.DOCKER_USER }} -p ${{ vars.DOCKER_PASSWORD }}
           docker push hello_world_java:latest
           docker push hello_world_java:${{ env.VERSION }}
 
