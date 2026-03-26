@@ -1,0 +1,29 @@
+name: deploy
+description: increments maven artifact version and pushes updated pom file to repo
+runs:
+  using: composite
+  inputs:
+    registry:
+      description: registry to push to
+      required: true
+    repository:
+      description: repo to push to
+      required: true
+    tag:
+      description: tag to add at end
+      required: true
+    ip_address:
+      description: ip to deploy to
+      required: true
+    key_path:
+      description: path to ssh key
+      required: true
+
+  steps:
+    - name: deploy
+      run: |
+        scp -i ${{ inputs.key_path }} scripts/docker_install.sh ubuntu@${{ vars.DEPLOY_IP }}:~/.
+        ssh -i ${{ inputs.key_path }} ubuntu@${{ vars.DEPLOY_IP }} << 'EOF'
+        ./docker_install.sh
+        sudo docker run ${{ inputs.registry }}/${{ inputs.repository }}:tag 
+        
