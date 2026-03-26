@@ -31,5 +31,5 @@ runs:
         ./docker_install.sh
         sudo apt-get update && sudo apt-get install -y awscli
         aws ecr get-login-password --region eu-west-1 | docker login -u AWS --password-stdin ${{ inputs.registry }}
-        sudo docker run ${{ inputs.registry }}/${{ inputs.repository }}:tag 
+        sudo docker run ${{ inputs.registry }}/${{ inputs.repository }}:{{ inputs.tag }}  
         EOF
