@@ -1,0 +1,25 @@
+name: increment_artifact_version
+description: increments maven artifact version and pushes updated pom file to repo
+runs:
+  using: composite
+  steps: 
+    - name: increment version
+      shell: bash
+      run: |
+        mvn build-helper:parse-version versions:set \
+        -DnewVersion=\${parsedVersion.majorVersion}.\
+        \${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} \
+        versions:commit
+        
+        STRING_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+        
+        echo "VERSION=$STRING_VERSION" >> $GITHUB_ENV    
+    - name: push altered maven file
+      shell: bash
+      # maybe remote add the repo along with the github token to make the action more portable
+      run: |
+        git config --local user.email "runner@github.com"
+        git config --local user.name "GitHub Runner"
+        git add pom.xml
+        git commit -m "git bot: Automated CI Commit [skip CI]"
+        git push  

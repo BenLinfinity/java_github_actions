@@ -1,0 +1,43 @@
+name : ECR Pipeline
+on:
+  push:
+    branches: [feature/breaking_into_actions]
+
+jobs:
+  build_and_push_jar:
+    runs-on: self-hosted
+    permissions:
+        contents: write
+        packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: increment version of pom and push
+        uses: ./.github/actions/increment_maven_version_and_push
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-1
+
+      - name: login to AWS ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2 
+
+      - name: build and push to ECR
+        env:
+          REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          REPOSITORY: github_actions
+          IMAGE_NAME: hello_world_java
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY/$IMAGE_NAME:latest -t $REGISTRY/$REPOSITORY/$IMAGE_NAME:${{env.VERSION}} .
+          docker push $REGISTRY/$REPOSITORY/$IMAGE_NAME:${{env.VERSION}}
+          docker push $REGISTRY/$REPOSITORY/$IMAGE_NAME:latest
+
+        #deploy stage
+
+      
+        
