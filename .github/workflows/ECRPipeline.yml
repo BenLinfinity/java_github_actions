@@ -37,7 +37,7 @@ jobs:
           docker push -t $ $REGISTRY/$REPOSITORY/IMAGE_NAME:${{env.VERSION}}
           docker push -t $ $REGISTRY/$REPOSITORY/IMAGE_NAME: latest
 
-        #deploy stage
+        #deploy stage 
 
       
         
