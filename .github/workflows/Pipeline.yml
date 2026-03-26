@@ -1,7 +1,7 @@
 name : CI/CD Pipeline
 on:
   push:
-    branches: [feature/breaking_into_actions]
+    branches: [master]
 
 jobs:
   build_and_push_jar:

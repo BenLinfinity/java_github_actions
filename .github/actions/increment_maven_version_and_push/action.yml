@@ -13,10 +13,10 @@ runs:
         
         STRING_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
         
-        echo "VERSION=$STRING_VERSION" >> $GITHUB_ENV
-    
+        echo "VERSION=$STRING_VERSION" >> $GITHUB_ENV    
     - name: push altered maven file
       shell: bash
+      # maybe remote add the repo along with the github token to make the action more portable
       run: |
         git config --local user.email "runner@github.com"
         git config --local user.name "GitHub Runner"
