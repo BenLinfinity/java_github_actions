@@ -4,6 +4,7 @@ runs:
   using: composite
   steps: 
     - name: increment version
+      shell: bash
       run: |
         mvn build-helper:parse-version versions:set \
         -DnewVersion=\${parsedVersion.majorVersion}.\
@@ -15,6 +16,7 @@ runs:
         echo "VERSION=$STRING_VERSION" >> $GITHUB_ENV
     
     - name: push altered maven file
+      shell: bash
       run: |
         git config --local user.email "runner@github.com"
         git config --local user.name "GitHub Runner"
