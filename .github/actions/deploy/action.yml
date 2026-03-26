@@ -20,9 +20,10 @@ runs:
   using: composite
   steps:
     - name: deploy
+      shell: bash
       run: |
-        scp -i ${{ inputs.key_path }} scripts/docker_install.sh ubuntu@${{ vars.DEPLOY_IP }}:~/.
-        ssh -i ${{ inputs.key_path }} ubuntu@${{ vars.DEPLOY_IP }} << 'EOF'
+        scp -i ${{ inputs.key_path }} scripts/docker_install.sh ubuntu@${{ inputs.ip_address }}:~/.
+        ssh -i ${{ inputs.key_path }} ubuntu@${{ inputs.ip_address }} << 'EOF'
         ./docker_install.sh
         sudo docker run ${{ inputs.registry }}/${{ inputs.repository }}:tag 
         
