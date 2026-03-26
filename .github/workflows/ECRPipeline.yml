@@ -33,9 +33,9 @@ jobs:
           REPOSITORY: dev/github_actions
           IMAGE_NAME: hello_world_java
         run: |
-          docker build -t $REGISTRY/$REPOSITORY/IMAGE_NAME:latest -t $REGISTRY/$REPOSITORY/IMAGE_NAME:${{env.VERSION}}
-          docker push -t $ $REGISTRY/$REPOSITORY/IMAGE_NAME:${{env.VERSION}}
-          docker push -t $ $REGISTRY/$REPOSITORY/IMAGE_NAME: latest
+          docker build -t $REGISTRY/$REPOSITORY/$IMAGE_NAME:latest -t $REGISTRY/$REPOSITORY/$IMAGE_NAME:${{env.VERSION}}
+          docker push -t $ $REGISTRY/$REPOSITORY/$IMAGE_NAME:${{env.VERSION}}
+          docker push -t $ $REGISTRY/$REPOSITORY/$IMAGE_NAME: latest
 
         #deploy stage
 
