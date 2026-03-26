@@ -10,7 +10,12 @@ jobs:
         contents: write
         packages: write
     steps:
-      - name: pull increment version of pom and push
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+
+      - name: increment version of pom and push
         uses: ./.github/actions/increment_maven_version_and_push
       - name: build image
         run: | 

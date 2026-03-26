@@ -1,15 +1,8 @@
-name: pipeline_base
-description: a basis for the pipeline excluding build and push stages
+name: increment_artifact_version
+description: increments maven artifact version and pushes updated pom file to repo
 runs:
   using: composite
   steps: 
-  #specify shell
-    - name: Checkout code
-      uses: actions/checkout@v6
-      with:
-        token: ${{secrets.GITHUB_TOKEN}}
-
-    
     - name: increment version
       run: |
         mvn build-helper:parse-version versions:set \
