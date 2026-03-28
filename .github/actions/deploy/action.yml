@@ -19,23 +19,36 @@ inputs:
     docker_user:
       description: user for registry
       required: true
+    dockerhub_password:
+      description: password specifically for dockerhub registry
+      required: false
+    aws_region: 
+      description: region for aws
+      required: true
+    registry_type:
+      description: the type of registry to push to
+      required: true
 runs:
   using: composite
   steps:
     - name: deploy
       shell: bash
+
       run: |
         ssh-keyscan ${{ inputs.ip_address }} >> ~/.ssh/known_hosts
         scp -i ${{ inputs.key_path }} scripts/docker_install.sh ubuntu@${{ inputs.ip_address }}:~/.
         ssh -i ${{ inputs.key_path }} ubuntu@${{ inputs.ip_address }} << 'EOF'
         ./docker_install.sh
         
-        sudo apt-get update && sudo apt-get install -y unzip curl && \
-        curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip' && \
-        unzip -q awscliv2.zip && \
-        sudo ./aws/install --update && \
-        rm -rf awscliv2.zip ./aws
+        if [[ "${{ inputs.registry_type }}" == "ecr" ]]; then
+          sudo apt-get update && sudo apt-get install -y unzip curl && \
+          curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip' && \
+          unzip -q awscliv2.zip && \
+          sudo ./aws/install --update && \
+          rm -rf awscliv2.zip ./aws
+          aws ecr get-login-password --region ${{ inputs.aws_region }} | sudo docker login -u ${{ inputs.docker_user }} --password-stdin ${{ inputs.registry }}
+        else
+          docker login -u ${{ inputs.docker_user }} -p ${{ inputs.dockerhub_password }}
 
-        aws ecr get-login-password --region eu-west-1 | sudo docker login -u AWS --password-stdin ${{ inputs.registry }}
         sudo docker run ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }}  
         EOF

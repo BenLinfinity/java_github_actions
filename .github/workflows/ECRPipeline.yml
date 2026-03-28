@@ -51,6 +51,8 @@ jobs:
           ip_address: ${{ vars.DEPLOY_IP }}
           key_path: ~/.ssh/key.pem
           docker_user: AWS
+          region: eu-west-1
+          registry_type: ecr
 
        
         
