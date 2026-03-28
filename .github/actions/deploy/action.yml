@@ -2,13 +2,13 @@ name: deploy
 description: increments maven artifact version and pushes updated pom file to repo
 inputs:
     registry:
-      description: registry to push to
-      required: true
+      description: aws registry to push to
+      required: false
     repository:
-      description: repo to push to
+      description: repo path to push to
       required: true
     tag:
-      description: tag to add at end
+      description: tag to push
       required: true
     ip_address:
       description: ip to deploy to
@@ -24,7 +24,7 @@ inputs:
       required: false
     aws_region: 
       description: region for aws
-      required: true
+      required: false
     registry_type:
       description: the type of registry to push to
       required: true
@@ -47,8 +47,9 @@ runs:
           sudo ./aws/install --update && \
           rm -rf awscliv2.zip ./aws
           aws ecr get-login-password --region ${{ inputs.aws_region }} | sudo docker login -u ${{ inputs.docker_user }} --password-stdin ${{ inputs.registry }}
+          sudo docker run ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }}
         else
           docker login -u ${{ inputs.docker_user }} -p ${{ inputs.dockerhub_password }}
-
-        sudo docker run ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }}  
+          sudo docker run ${{ inputs.docker_user }}/
+          
         EOF
