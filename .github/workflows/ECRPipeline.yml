@@ -1,7 +1,7 @@
 name : ECR Pipeline
 on:
   push:
-    branches: [feature/breaking_into_actions]
+    branches: [AWS-Infrastructure]
 
 jobs:
   build_and_push_jar:
@@ -25,19 +25,35 @@ jobs:
 
       - name: login to AWS ECR
         id: ecr-login
-        uses: aws-actions/amazon-ecr-login@v2 
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: export env variable
+        run: echo "REGISTRY=${{ steps.ecr-login.outputs.registry }}" >> $GITHUB_ENV 
 
       - name: build and push to ECR
+        id: build
         env:
-          REGISTRY: ${{ steps.ecr-login.outputs.registry }}
           REPOSITORY: github_actions
           IMAGE_NAME: hello_world_java
         run: |
-          docker build -t $REGISTRY/$REPOSITORY/$IMAGE_NAME:latest -t $REGISTRY/$REPOSITORY/$IMAGE_NAME:${{env.VERSION}} .
-          docker push $REGISTRY/$REPOSITORY/$IMAGE_NAME:${{env.VERSION}}
-          docker push $REGISTRY/$REPOSITORY/$IMAGE_NAME:latest
-
-        #deploy stage
-
+          docker build -t ${{ env.REGISTRY }}/$REPOSITORY/$IMAGE_NAME:latest -t $REGISTRY/$REPOSITORY/$IMAGE_NAME:${{env.VERSION}} .
+          docker push ${{ env.REGISTRY }}/$REPOSITORY/$IMAGE_NAME:${{env.VERSION}}
+          docker push ${{ env.REGISTRY }}/$REPOSITORY/$IMAGE_NAME:latest
+          echo "REPOSITORY=$REPOSITORY" >> $GITHUB_OUTPUT
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_OUTPUT 
       
+      - name: deploy
+        uses: ./.github/actions/deploy
+        with:
+          registry: ${{ env.REGISTRY }}
+          repository: ${{ steps.build.outputs.REPOSITORY }}/${{ steps.build.outputs.IMAGE_NAME }}
+          tag: latest
+          ip_address: ${{ vars.DEPLOY_IP }}
+          ssh_key: ${{ secrets.DEPLOY_SERVER_KEY }}
+          docker_user: AWS
+          aws_region: eu-west-1
+          registry_type: ecr
+        
+
+       
         

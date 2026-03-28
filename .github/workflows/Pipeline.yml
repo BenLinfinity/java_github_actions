@@ -2,7 +2,8 @@ name : CI/CD Pipeline
 on:
   push:
     branches: [master]
-
+env:
+  IMAGE: hello_world_java
 jobs:
   build_and_push_jar:
     runs-on: ubuntu-latest
@@ -23,10 +24,20 @@ jobs:
           -t ${{ vars.DOCKER_USER }}/hello_world_java:${{ env.VERSION }}  .
           
           docker login -u ${{ vars.DOCKER_USER }} -p ${{ secrets.DOCKERHUB_PUSH }}
-          docker push ${{ vars.DOCKER_USER }}/hello_world_java:latest
-          docker push ${{ vars.DOCKER_USER }}/hello_world_java:${{ env.VERSION }}
+          docker push ${{ vars.DOCKER_USER }}/${{ env.IMAGE }}:latest
+          docker push ${{ vars.DOCKER_USER }}/${{ env.IMAGE }}:${{ env.VERSION }}
       - name: deploy image
-        run: docker run ${{ vars.DOCKER_USER }}/hello_world_java:latest
+        uses: ./.github/actions/deploy
+        with:
+          tag: latest
+          ip_address: ${{ vars.PUBLIC_DEPLOY_IP }}
+          ssh_key: ${{ secrets.DEPLOY_SERVER_KEY }}
+          docker_user: ${{ vars.DOCKER_USER }}
+          dockerhub_password: ${{ secrets.DOCKERHUB_PUSH }}
+          repository:  ${{ vars.DOCKER_USER }}/${{ env.IMAGE }}
+          registry_type: dockerhub
+
+
 
       #- name: Set up Java and Maven environment
         #uses: actions/setup-java@v5.2.0
