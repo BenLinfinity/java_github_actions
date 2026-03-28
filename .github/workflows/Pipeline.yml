@@ -31,7 +31,7 @@ jobs:
         with:
           tag: latest
           ip_address: ${{ vars.DEPLOY_IP }}
-          key_path: ~/.ssh/key.pem
+          ssh_key: ${{ secrets.DEPLOY_SERVER_KEY }}
           docker_user: ${{ vars.DOCKER_USER }}
           repository:  ${{ vars.DOCKER_USER }}/${{ env.IMAGE }}
           registry_type: dockerhub
