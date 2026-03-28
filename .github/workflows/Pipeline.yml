@@ -30,7 +30,7 @@ jobs:
         uses: ./.github/actions/deploy
         with:
           tag: latest
-          ip_address: ${{ vars.DEPLOY_IP }}
+          ip_address: 3.254.157.5
           ssh_key: ${{ secrets.DEPLOY_SERVER_KEY }}
           docker_user: ${{ vars.DOCKER_USER }}
           dockerhub_password: ${{ secrets.DOCKERHUB_PUSH }}
