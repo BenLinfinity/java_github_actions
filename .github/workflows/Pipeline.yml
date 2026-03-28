@@ -6,7 +6,7 @@ env:
   IMAGE: hello_world_java
 jobs:
   build_and_push_jar:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
         contents: write
         packages: write

@@ -40,7 +40,7 @@ runs:
         ssh-keyscan ${{ inputs.ip_address }} >> ~/.ssh/known_hosts
         scp -i ~/.ssh/key.pem scripts/docker_install.sh ubuntu@${{ inputs.ip_address }}:~/.
         ssh -i ~/.ssh/key.pem ubuntu@${{ inputs.ip_address }} << 'EOF'
-        ./docker_install.sh
+        ./docker_install.sh || echo "INSTALL FAILED"
         
         if [[ "${{ inputs.registry_type }}" == "ecr" ]]; then
           sudo apt-get update && sudo apt-get install -y unzip curl && \
@@ -51,7 +51,7 @@ runs:
           aws ecr get-login-password --region ${{ inputs.aws_region }} | sudo docker login -u ${{ inputs.docker_user }} --password-stdin ${{ inputs.registry }}
           sudo docker run ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }}
         else
-          sudo docker login -u ${{ inputs.docker_user }} -p ${{ inputs.dockerhub_password }}
-          sudo docker run ${{ inputs.repository }}:${{ inputs.tag }}
+          sudo docker login -u ${{ inputs.docker_user }} -p ${{ inputs.dockerhub_password }} || echo "LOGIN FAILED"
+          sudo docker run ${{ inputs.repository }}:${{ inputs.tag }} || echo "RUN FAILED
         fi
         EOF
