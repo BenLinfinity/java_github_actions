@@ -53,6 +53,7 @@ jobs:
           docker_user: AWS
           aws_region: eu-west-1
           registry_type: ecr
+        
 
        
         

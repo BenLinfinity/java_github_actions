@@ -51,7 +51,7 @@ runs:
           aws ecr get-login-password --region ${{ inputs.aws_region }} | sudo docker login -u ${{ inputs.docker_user }} --password-stdin ${{ inputs.registry }}
           sudo docker run ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }}
         else
-          docker login -u ${{ inputs.docker_user }} -p ${{ inputs.dockerhub_password }}
-          sudo docker run ${{ inputs.docker_user }}/
+          sudo docker login -u ${{ inputs.docker_user }} -p ${{ inputs.dockerhub_password }}
+          sudo docker run ${{ inputs.repository }}:${{ inputs.tag }}
         fi
         EOF
