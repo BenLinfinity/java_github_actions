@@ -35,12 +35,14 @@ runs:
       shell: bash
 
       run: |
+        ssh -v -i ~/.ssh/key.pem ubuntu@${{ inputs.ip_address }} "echo connected && whoami"
+        echo "ssh exit code: $?"
         mkdir -p ~/.ssh
         echo "${{ inputs.ssh_key }}" > ~/.ssh/key.pem
         chmod 600 ~/.ssh/key.pem
         ssh-keyscan ${{ inputs.ip_address }} >> ~/.ssh/known_hosts
         scp -i ~/.ssh/key.pem scripts/docker_install.sh ubuntu@${{ inputs.ip_address }}:~/.
-        ssh -i ~/.ssh/key.pem ubuntu@${{ inputs.ip_address }} echo "connected && whoami"
+        ssh -i ~/.ssh/key.pem ubuntu@${{ inputs.ip_address }} << 'EOF'
         ./docker_install.sh || echo "INSTALL FAILED"
         
         if [[ "${{ inputs.registry_type }}" == "ecr" ]]; then
