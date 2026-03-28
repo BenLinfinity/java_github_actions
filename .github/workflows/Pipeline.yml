@@ -1,7 +1,7 @@
 name : CI/CD Pipeline
 on:
   push:
-    branches: [retry_dh_deploy]
+    branches: [master]
 env:
   IMAGE: hello_world_java
 jobs:
@@ -30,7 +30,7 @@ jobs:
         uses: ./.github/actions/deploy
         with:
           tag: latest
-          ip_address: 3.254.157.5
+          ip_address: ${{ vars.PUBLIC_DEPLOY_IP }}
           ssh_key: ${{ secrets.DEPLOY_SERVER_KEY }}
           docker_user: ${{ vars.DOCKER_USER }}
           dockerhub_password: ${{ secrets.DOCKERHUB_PUSH }}
